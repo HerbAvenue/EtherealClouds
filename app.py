@@ -13,11 +13,11 @@ def arrow_format(value, format):
 @app.route("/")
 def index():
     
-    #realTimeWeatherURL = "https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
-    #forecastWeatherURL = "https://api.tomorrow.io/v4/weather/forecast?location=new%20york&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
-    #headers = {"accept": "application/json"}
-    #realTimeData = requests.get(realTimeWeatherURL, headers).json()
-    #forecastData = requests.get(forecastWeatherURL, headers).json()
+    realTimeWeatherURL = "https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
+    forecastWeatherURL = "https://api.tomorrow.io/v4/weather/forecast?location=new%20york&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
+    headers = {"accept": "application/json"}
+    realTimeData = requests.get(realTimeWeatherURL, headers).json()
+    forecastData = requests.get(forecastWeatherURL, headers).json()
     
     weather_code_to_icon = {
       0: "Unknown",
@@ -55,13 +55,16 @@ def index():
     with open('forecast.json', 'r') as file:
         forecastTest = json.load(file)
 
-    est_time = arrow.get(realtimeTest["data"]["time"]).to('US/Eastern')
+    #                     realtimeTest or realTimeData
+    est_time = arrow.get(realTimeData["data"]["time"]).to('US/Eastern')
     
     return render_template('index.html', 
-                           realTime=realtimeTest,
-                           forecast=forecastTest,
-                           time=est_time, 
+                           #realtimeTest or realTimeData
+                           realTime=realTimeData,
+                           #forecastTest or forecastData
+                           forecast=forecastData,
                            
+                           time=est_time, 
                            weatherCodeIndex=weatherCodeIndex,  
                            codeIcon=weather_code_to_icon,
                            )
