@@ -1,21 +1,24 @@
 from flask import Flask, render_template
+from datetime import datetime
+import arrow
 import requests
 import json
 
-
 app = Flask(__name__)
+
+@app.template_filter('arrow_format')
+def arrow_format(value, format):
+    return arrow.get(value).to('US/Eastern').format(format)
 
 @app.route("/")
 def index():
     
-    realTimeWeatherURL = "https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
-    forecastWeatherURL = "https://api.tomorrow.io/v4/weather/forecast?location=new%20york&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
-    headers = {"accept": "application/json"}
-    realTimeData = requests.get(realTimeWeatherURL, headers).json()
-    forecastData = requests.get(forecastWeatherURL, headers).json()
-
-    #weatherCode = realTimeData["data"]["values"]["weatherCode"]
-
+    #realTimeWeatherURL = "https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
+    #forecastWeatherURL = "https://api.tomorrow.io/v4/weather/forecast?location=new%20york&apikey=mpfxt9Varif1EaQMNVcFHQGhlxoKBMxq"
+    #headers = {"accept": "application/json"}
+    #realTimeData = requests.get(realTimeWeatherURL, headers).json()
+    #forecastData = requests.get(forecastWeatherURL, headers).json()
+    
     weather_code_to_icon = {
       0: "Unknown",
       1000: "clear_day.svg",
@@ -43,9 +46,6 @@ def index():
       8000: "tstorm.svg"
     }
 
-    #TEST DATA
-    weatherCodeTest = 1001
-
     with open('realtime.json', 'r') as file:
         realtimeTest = json.load(file)
 
@@ -54,13 +54,13 @@ def index():
 
     with open('forecast.json', 'r') as file:
         forecastTest = json.load(file)
-    
-    #print(realTimeData)
+
+    est_time = arrow.get(realtimeTest["data"]["time"]).to('US/Eastern')
     
     return render_template('index.html', 
                            realTime=realtimeTest,
-                           weatherCode=weatherCodeTest,
-                           forecast=forecastTest, 
+                           forecast=forecastTest,
+                           time=est_time, 
                            
                            weatherCodeIndex=weatherCodeIndex,  
                            codeIcon=weather_code_to_icon,

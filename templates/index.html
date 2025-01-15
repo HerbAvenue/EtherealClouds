@@ -9,26 +9,55 @@
         <h1 class="header-text">Ethereal Clouds</h1>
     </div>
 </nav>
+
 <br>
-
-
     
-<div class="container text-center my-5">
+<div class="container border rounded-5 my-3 p-4">
     <div class="row">
-        <div class="col border rounded-5">
-            <div class="content p-4" style="color: black;">
-                <h2>{{ realTime["location"]["name"] }}</h2>
-                <h2>Condition: {{ weatherCodeIndex["weatherCode"][weatherCode|string]}}</h2>
-                <img class="image" src="{{ url_for('static',filename='images/tomorrow-weather-codes-master/V1_icons/color/') + codeIcon[weatherCode] }}"> 
-                <h2>{{ realTime["data"]["values"]["temperature"] }} ℃</h2> 
-            </div>
+        <div class="col text-start">
+            <h2>{{ realTime["location"]["name"] }}</h2>
         </div>
-        
-        <div class="col border rounded-5">
-            <div class="content p-4" style="color: black">
-                {% for hour in forecast["timelines"]["hourly"][:5] %}
-                <p>Time: {{ hour["time"] }}</p>
-                <p>Temperature: {{ hour["values"]["temperature"] }} ℃</p>
+
+        <div class="col text-end">
+            <h1>{{ realTime["data"]["time"] | arrow_format('MMMM DD, YYYY') }}
+            <h2>{{ realTime["data"]["time"] | arrow_format('H:mm:ss A') }}</h2>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col text-center d-flex align-items-center justify-content-center">
+                <div class="row d-flex align-items-center">
+
+                    <div class="col" style="width: 350px;">
+                        <img src="static/images/tomorrow-weather-codes-master/V1_icons/color/{{ codeIcon[realTime["data"]["values"]["weatherCode"]] }}" class="img-fluid">
+                        <h2>{{ weatherCodeIndex["weatherCode"][realTime["data"]["values"]["weatherCode"] | string] }}</h2>
+                    </div>
+
+                    <div class="col">
+                        <h1 class="ms-2">{{ realTime["data"]["values"]["temperature"] }} ℃</h1>
+                    </div>  
+
+                </div>
+            </div>
+
+
+            <div class="col text-center">
+                <h1>7 Day Forecast</h1>
+                {% for day in forecast["timelines"]["daily"][:7] %}
+                <div class="row">
+                    <div class="col">
+                        <p>{{ day["time"] | arrow_format('MM/D') }}</p>
+                    </div>
+
+                    <div class="col">
+                        <img src="static/images/tomorrow-weather-codes-master/V1_icons/color/{{ codeIcon[day["values"]["weatherCodeMax"]] }}" style="height: 50px; width: 50px;"> 
+                    </div>
+
+                    <div class="col">
+                        <p>{{ weatherCodeIndex["weatherCode"][day["values"]["weatherCodeMax"] | string] }}</p>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
